@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        button{
+            padding: .5rem;
+            background-color: #fff;
+            border:1px solid #ccc;
+            font-size: 1.2rem;
+            border-radius:5px;
+            transition: all .3s;
+        }
+        button:hover{
+            background-color: #eee;
+            color: red;
+            /*opacity: .5;*/
+        }
+        input{
+            padding: .5rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas1" width="600px" height="600px">
+
+</canvas>
+
+<div>
+    <button onclick="cubeGames.drawCubes(3,3,4)">redraw</button>
+    <input type="number" placeholder="enter number of cubes" >
+</div>
+<script src="../bower_components/underscore/underscore-min.js"></script>
+<script src="cubeGame.js"></script>
+<script>
+    var cubeGames = new CubeGame(document.getElementById('canvas1'));
+    cubeGames.drawCubes(3,3,4);
+    function checkAnswer(evt){
+        var inputValue = evt.target.value;
+        if(evt.keyCode == 13 && inputValue.length){
+//        console.log(inputValue);
+            console.log(cubeGames.checkAnswer(inputValue));
+            evt.target.value = '';
+        }
+//        console.log(evt);
+    }
+    document.getElementsByTagName('input')[0].onkeydown = checkAnswer;
+</script>
+</body>
+</html>
