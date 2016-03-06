@@ -17,6 +17,8 @@ function CubeGame(canvasElement, config) {
 		startY: 200,
 		lineIncrement: 10
 	};
+	self.stats = [];
+	self.currentTime = 0;
 	self.config = _.extend(defaults, config);
 
 
@@ -207,7 +209,9 @@ function CubeGame(canvasElement, config) {
 		var ctx = self.ctx;
 		var progressIncrement = progressWidth / 1000;
 		clearInterval(self.progressInterval);
+		self.currentTime = 0;
 		self.progressInterval = setInterval(function () {
+			self.currentTime += 10;
 			ctx.clearRect(0, 0, self.canvas.width, 30);
 			ctx.beginPath();
 			ctx.fillStyle = 'rgba(255,0,0, .5)';
@@ -222,7 +226,7 @@ function CubeGame(canvasElement, config) {
 				clearInterval(self.progressInterval);
 				writeCubeNumber();
 				ctx.clearRect(0, 0, self.canvas.width, 30);
-
+				saveStats(getNumberOfCubes(), false);
 				setTimeout(function () {
 					drawCubes(self.fieldWidth, self.lineWidth, self.numberOfFields);
 				}, 2000);
@@ -230,8 +234,8 @@ function CubeGame(canvasElement, config) {
 		}, 10);
 	}
 
-	function saveStats() {
-
+	function saveStats(numberOfCubes, isSuccess) {
+		self.stats.push({time: self.currentTime, numberOfCubes: numberOfCubes, isSuccess: isSuccess, matrix: JSON.stringify(self.fields)});
 	}
 
 	function checkAnswer(cubeNumber) {
@@ -242,17 +246,22 @@ function CubeGame(canvasElement, config) {
 			clearInterval(self.progressInterval);
 		}
 		writeCubeNumber();
+		saveStats(getNumberOfCubes(), cubeNumber == getNumberOfCubes());
 		return cubeNumber == getNumberOfCubes();
 
 	}
 
-
+	function getStats(){
+		console.log(self.stats);
+		return self.stats;
+	}
 	//drawCubes(3,3,4, [field1, field2, field3]);
 	//drawCubes(3,3,4, [[[1,1,0],[0,1,0],[0,1,0]],[[0,0,0],[0,0,1],[0,0,1]],[[1,0,1],[0,0,0],[0,1,0]]]);
 
 	return {
 		drawCubes: drawCubes,
 		getNumberOfCubes: getNumberOfCubes,
-		checkAnswer: checkAnswer
+		checkAnswer: checkAnswer,
+		getStats: getStats
 	}
 }
