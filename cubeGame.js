@@ -165,7 +165,6 @@ function CubeGame(canvasElement, config) {
 			drawFields(self.fields, {x: self.config.startX, y: self.config.startY});
 			console.log(JSON.stringify(self.fields), getNumberOfCubes());
 		}
-		//console.log(_.isEqual(self.fields, inFields));
 	}
 
 	function drawCubes(fieldWidth, lineWidth, numberOfFields, fields) {
@@ -184,7 +183,7 @@ function CubeGame(canvasElement, config) {
 		drawFields(self.fields);
 		//progressWidth = self.canvas.width;
 		//window.requestAnimationFrame(drawProgress);
-		if (!!self.isDebug) {
+		if (!self.isDebug) {
 			drawProgress();
 
 		}
@@ -192,8 +191,6 @@ function CubeGame(canvasElement, config) {
 	}
 
 	function getNumberOfCubes() {
-		//console.log(self.fields);
-
 		return self.cubeCount;
 	}
 
@@ -209,6 +206,7 @@ function CubeGame(canvasElement, config) {
 		var progressWidth = self.canvas.width;
 		var ctx = self.ctx;
 		var progressIncrement = progressWidth / 1000;
+		clearInterval(self.progressInterval);
 		self.progressInterval = setInterval(function () {
 			ctx.clearRect(0, 0, self.canvas.width, 30);
 			ctx.beginPath();
@@ -223,10 +221,11 @@ function CubeGame(canvasElement, config) {
 			if (progressWidth <= 0) {
 				clearInterval(self.progressInterval);
 				writeCubeNumber();
+				ctx.clearRect(0, 0, self.canvas.width, 30);
+
 				setTimeout(function () {
 					drawCubes(self.fieldWidth, self.lineWidth, self.numberOfFields);
-				}, 2000)
-				//ctx.clearRect(0, 0, self.canvas.width, 30);
+				}, 2000);
 			}
 		}, 10);
 	}
