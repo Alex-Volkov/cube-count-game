@@ -1,10 +1,16 @@
-function CubeGame(canvasElement, config){
+/* TODO
+ 1. change the angle of the cubes +
+ 2. make records table
+ 3. make params field
+ */
+function CubeGame(canvasElement, config) {
 	var self = this;
 	self.canvas = canvasElement;
 	self.ctx = this.canvas.getContext('2d');
 	self.cubeCount = 0;
 	self.firstPass = true;
 	self.fields = [];
+	self.isDebug = false;
 	var defaults = {
 		coeff: 20,
 		startX: 100,
@@ -23,8 +29,8 @@ function CubeGame(canvasElement, config){
 		ctx.fillStyle = '#eee';
 		ctx.beginPath();
 		ctx.moveTo(leftTopX, leftTopY);
-		ctx.lineTo(leftTopX + 2 * self.config.coeff, leftTopY + 1 * self.config.coeff);
-		ctx.lineTo(leftTopX + 2 * self.config.coeff, leftTopY + 3.5 * self.config.coeff);
+		ctx.lineTo(leftTopX + 1.8 * self.config.coeff, leftTopY + 1 * self.config.coeff);
+		ctx.lineTo(leftTopX + 1.8 * self.config.coeff, leftTopY + 3.5 * self.config.coeff);
 		ctx.lineTo(leftTopX, leftTopY + 2.5 * self.config.coeff);
 		ctx.lineTo(leftTopX, leftTopY);
 		ctx.fill();
@@ -33,9 +39,9 @@ function CubeGame(canvasElement, config){
 		// second side
 		ctx.beginPath();
 		ctx.fillStyle = '#fff';
-		ctx.lineTo(leftTopX + 2 * self.config.coeff, leftTopY - 1 * self.config.coeff);
+		ctx.lineTo(leftTopX + 2.2 * self.config.coeff, leftTopY - 1 * self.config.coeff);
 		ctx.lineTo(leftTopX + 4 * self.config.coeff, leftTopY);
-		ctx.lineTo(leftTopX + 2 * self.config.coeff, leftTopY + 1 * self.config.coeff);
+		ctx.lineTo(leftTopX + 1.8 * self.config.coeff, leftTopY + 1 * self.config.coeff);
 		ctx.lineTo(leftTopX, leftTopY);
 		ctx.closePath();
 		ctx.fill();
@@ -45,8 +51,8 @@ function CubeGame(canvasElement, config){
 		ctx.fillStyle = '#ccc';
 		ctx.moveTo(leftTopX + 4 * self.config.coeff, leftTopY);
 		ctx.lineTo(leftTopX + 4 * self.config.coeff, leftTopY + 2.5 * self.config.coeff);
-		ctx.lineTo(leftTopX + 2 * self.config.coeff, leftTopY + 3.5 * self.config.coeff);
-		ctx.lineTo(leftTopX + 2 * self.config.coeff, leftTopY + 1 * self.config.coeff);
+		ctx.lineTo(leftTopX + 1.8 * self.config.coeff, leftTopY + 3.5 * self.config.coeff);
+		ctx.lineTo(leftTopX + 1.8 * self.config.coeff, leftTopY + 1 * self.config.coeff);
 		ctx.closePath();
 		ctx.fill();
 		ctx.stroke();
@@ -56,10 +62,15 @@ function CubeGame(canvasElement, config){
 	function fillLine(width) {
 		var res = [];
 		for (var cnt = 0; cnt < width; cnt++) {
-			res.push(Math.round(Math.random() * 1));
+			if(!self.isDebug){
+				res.push(Math.round(Math.random() * 1));
+			}else{
+				res.push(1);
+			}
 		}
 		return res;
 	}
+
 	function fillFields(fieldWidth, lineWidth, numberOfFields) {
 		// from far side
 		var res = [], tmpField;
@@ -72,6 +83,7 @@ function CubeGame(canvasElement, config){
 		}
 		return res;
 	}
+
 	function drawLine(line, lineStart) {
 		var lineStartCloned = _.clone(lineStart);
 		for (var cnt = 0; cnt < line.length; cnt++) {
@@ -83,6 +95,7 @@ function CubeGame(canvasElement, config){
 			lineStartCloned.y += 2 * self.config.lineIncrement;
 		}
 	}
+
 	function drawField(field, startCoords) {
 		startCoords = _.clone(startCoords);
 		for (var cnt = 0; cnt < field.length; cnt++) {
@@ -91,6 +104,7 @@ function CubeGame(canvasElement, config){
 			startCoords.y += 20;
 		}
 	}
+
 	function drawFields(inFields) {
 		self.cubeCount = 0;
 		self.fields = _.clone(inFields);
@@ -146,14 +160,15 @@ function CubeGame(canvasElement, config){
 			drawField(field, startCoords);
 			startCoords.y += -fieldYIncrement;
 		}
-		if(self.firstPass){
+		if (self.firstPass) {
 			self.firstPass = false;
 			drawFields(self.fields, {x: self.config.startX, y: self.config.startY});
 			console.log(JSON.stringify(self.fields), getNumberOfCubes());
 		}
 		//console.log(_.isEqual(self.fields, inFields));
 	}
-	function drawCubes(fieldWidth, lineWidth, numberOfFields, fields){
+
+	function drawCubes(fieldWidth, lineWidth, numberOfFields, fields) {
 		self.fieldWidth = fieldWidth;
 		self.lineWidth = lineWidth;
 		self.numberOfFields = numberOfFields;
@@ -162,33 +177,39 @@ function CubeGame(canvasElement, config){
 		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
 		self.fields = fillFields(fieldWidth, lineWidth, numberOfFields);
 		// for debug
-		if (!!fields){
+		if (!!fields) {
 			self.fields = fields
 		}
 		self.firstPass = true;
 		drawFields(self.fields);
 		//progressWidth = self.canvas.width;
 		//window.requestAnimationFrame(drawProgress);
-		drawProgress();
+		if (!!self.isDebug) {
+			drawProgress();
+
+		}
 		//writeCubeNumber();
 	}
-	function getNumberOfCubes(){
+
+	function getNumberOfCubes() {
 		//console.log(self.fields);
 
 		return self.cubeCount;
 	}
-	function writeCubeNumber(){
+
+	function writeCubeNumber() {
 		self.ctx.beginPath();
 		self.ctx.font = '30px sans-serif';
 		self.ctx.fillText(getNumberOfCubes(), self.canvas.width - 50, self.canvas.height - 50);
 		self.ctx.closePath();
 		//console.log(getNumberOfCubes());
 	}
-	function drawProgress(){
+
+	function drawProgress() {
 		var progressWidth = self.canvas.width;
 		var ctx = self.ctx;
 		var progressIncrement = progressWidth / 1000;
-		self.progressInterval = setInterval(function(){
+		self.progressInterval = setInterval(function () {
 			ctx.clearRect(0, 0, self.canvas.width, 30);
 			ctx.beginPath();
 			ctx.fillStyle = 'rgba(255,0,0, .5)';
@@ -196,34 +217,35 @@ function CubeGame(canvasElement, config){
 			ctx.fill();
 			ctx.closePath();
 			progressWidth -= progressIncrement;
-		//if(progressWidth > 0){
-		//	window.requestAnimationFrame(drawProgress);
-		//}
-			if(progressWidth <= 0){
+			//if(progressWidth > 0){
+			//	window.requestAnimationFrame(drawProgress);
+			//}
+			if (progressWidth <= 0) {
 				clearInterval(self.progressInterval);
 				writeCubeNumber();
-				setTimeout(function(){
+				setTimeout(function () {
 					drawCubes(self.fieldWidth, self.lineWidth, self.numberOfFields);
 				}, 2000)
 				//ctx.clearRect(0, 0, self.canvas.width, 30);
 			}
-		},10);
+		}, 10);
 	}
-	function saveStats(){
+
+	function saveStats() {
 
 	}
-	function checkAnswer(cubeNumber){
-		setTimeout(function(){
+
+	function checkAnswer(cubeNumber) {
+		setTimeout(function () {
 			drawCubes(self.fieldWidth, self.lineWidth, self.numberOfFields);
 		}, 2000);
-		if (!!self.progressInterval){
+		if (!!self.progressInterval) {
 			clearInterval(self.progressInterval);
 		}
 		writeCubeNumber();
 		return cubeNumber == getNumberOfCubes();
 
 	}
-
 
 
 	//drawCubes(3,3,4, [field1, field2, field3]);
