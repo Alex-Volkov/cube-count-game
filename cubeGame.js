@@ -214,7 +214,13 @@ function CubeGame(canvasElement, config) {
 		self.ctx.closePath();
 		//console.log(getNumberOfCubes());
 	}
-
+	function getColorFraction(){
+		var redFraction2 = Math.round(Math.random() * 255);
+		if (redFraction2 < 130) {
+			redFraction2 = 130;
+		}
+		return redFraction2;
+	}
 	function drawProgress() {
 		var progressWidth = self.canvas.width;
 		var ctx = self.ctx;
@@ -225,15 +231,15 @@ function CubeGame(canvasElement, config) {
 		var redFraction = 255;
 		self.progressInterval = setInterval(function () {
 			self.currentTime += 10;
-			ctx.clearRect(0, 0, self.canvas.width, 20);
+			ctx.clearRect(0, 0, self.canvas.width, 10);
 			ctx.beginPath();
 			if (self.currentTime % 6 == 0) {
 				redFraction--;
 			}
 			ctx.fillStyle = 'rgba(' + redFraction + ',0,0, .7)';
-			ctx.rect(0, 0, progressWidth, 15);
+			ctx.rect(0, 0, progressWidth, 10);
 
-			ctx.fill();
+			//ctx.fill();
 			ctx.closePath();
 			progressWidth -= progressIncrement;
 			//if(progressWidth > 0){
@@ -242,7 +248,7 @@ function CubeGame(canvasElement, config) {
 			if (progressWidth <= 0) {
 				clearInterval(self.progressInterval);
 				writeCubeNumber();
-				ctx.clearRect(0, 0, self.canvas.width, 15);
+				ctx.clearRect(0, 0, self.canvas.width, 10);
 				saveStats(getNumberOfCubes(), false);
 				setTimeout(function () {
 					drawCubes(self.fieldWidth, self.lineWidth, self.numberOfFields);
@@ -254,6 +260,7 @@ function CubeGame(canvasElement, config) {
 		var cellWidth;
 		var waitParam = 0;
 		var colors = [];
+		var colors2 = [];
 		var opacity = 1;
 		self.progressInterval2 = setInterval(function () {
 			//console.log(progressWidth2);
@@ -261,18 +268,19 @@ function CubeGame(canvasElement, config) {
 					opacity += 0.001;
 				}
 				var redFraction2 = 255;
-				ctx.clearRect(0, 20, self.canvas.width, 15);
+				ctx.clearRect(0, 10, self.canvas.width, 21);
 				progressWidth2 -= .6;
 
 				for (var cnt = 0; cnt < self.canvas.width; cnt += 10) {
 					ctx.beginPath();
-					redFraction2 = Math.round(Math.random() * 255);
-					if (redFraction2 < 130) {
-						redFraction2 = 130;
-					}
+					//redFraction2 = Math.round(Math.random() * 255);
+					//if (redFraction2 < 130) {
+					//	redFraction2 = 130;
+					//}
 					if (waitParam == 300 || waitParam == 0) {
 						waitParam = 0;
-						colors[cnt] = redFraction2;
+						colors[cnt] = getColorFraction();
+						colors2[cnt] = getColorFraction();
 					}
 					//console.log(redFraction2);
 
@@ -286,10 +294,16 @@ function CubeGame(canvasElement, config) {
 						} else {
 							cellWidth = cellWidthConst;
 						}
-						ctx.rect(cnt, 20, cellWidth, 15);
+						ctx.rect(cnt, 10, cellWidth, 20);
 						ctx.fill();
-						ctx.stroke();
+						//ctx.stroke();
 						ctx.closePath();
+						ctx.beginPath();
+						ctx.fillStyle = 'rgba(' + colors2[cnt] + ',' +  '0, 0,'+ opacity + ')';
+						ctx.rect(cnt, 20, cellWidth, 10);
+						ctx.fill();
+						ctx.closePath();
+
 					}
 				}
 			waitParam += 10;
