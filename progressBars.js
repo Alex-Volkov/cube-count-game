@@ -10,7 +10,8 @@ function DrawProgress(config) {
 	this.yPos = 0;
 	this.currentTime = 0;
 	this.callBack = config.callBack;
-//console.log(this);
+
+	// getting random red fraction of color
 	DrawProgress.prototype.getColorFraction = function() {
 		var redFraction2 = Math.round(Math.random() * 255);
 		if (redFraction2 < 130) {
@@ -19,6 +20,7 @@ function DrawProgress(config) {
 		return redFraction2;
 	};
 
+	// progress complete callback
 	DrawProgress.prototype.onProgressComplete = function() {
 		clearInterval(this.progressInterval);
 		this.config.ctx.clearRect(0, this.yPos, this.config.canvas.width, 10);
@@ -92,6 +94,49 @@ function DrawProgress(config) {
 				ctx.fill();
 				ctx.closePath();
 
+			}
+		}
+		this.waitParam += 10;
+		if (this.progressWidth <= 0) {
+			this.onProgressComplete.apply(this);
+		}
+	};
+	DrawProgress.prototype.thirdProgress = function() {
+		this.opacity = .7;
+		this.progressWidth = this.config.canvas.width;
+		this.progressInterval = setInterval(this.thirdProgressFrame.bind(this), 10)
+	};
+
+	DrawProgress.prototype.thirdProgressFrame = function () {
+		//console.log(progressWidth2);
+		var ctx = this.config.ctx;
+		if (this.opacity < 1) {
+			this.opacity += 0.0005;
+		}
+		ctx.clearRect(0, this.yPos, this.config.canvas.width, 21);
+		this.progressWidth -= .6;
+		this.currentTime += 10;
+		for (var cnt = 0; cnt < this.config.canvas.width; cnt += 10) {
+			ctx.beginPath();
+			if (this.waitParam == 300 || this.waitParam == 0) {
+				this.waitParam = 0;
+				this.colors[cnt] = this.getColorFraction();
+				this.colors2[cnt] = this.getColorFraction();
+			}
+
+			ctx.strokeStyle = 'white';
+			ctx.lineWidth = 1;
+			if (cnt < this.progressWidth) {
+				if (cnt < this.progressWidth && (cnt + this.cellWidthConst > this.progressWidth )) {
+					this.cellWidth = this.cellWidthConst - (cnt - this.progressWidth);
+				} else {
+					this.cellWidth = this.cellWidthConst;
+				}
+				ctx.fillStyle = 'rgba(' + this.colors[cnt] + ',' + '0, 0,' + this.opacity + ')';
+				ctx.rect(cnt, this.yPos, this.cellWidth, 15);
+				ctx.fill();
+				ctx.stroke();
+				ctx.closePath();
 			}
 		}
 		this.waitParam += 10;

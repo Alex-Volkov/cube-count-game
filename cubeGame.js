@@ -13,7 +13,7 @@ function CubeGame(canvasElement, config) {
 	self.isDebug = false;
 
 	var defaults = {
-		selectedProgressBar: 2,
+		selectedProgressBar: 3,
 		coeff: 20,
 		startX: 100,
 		startY: 200,
