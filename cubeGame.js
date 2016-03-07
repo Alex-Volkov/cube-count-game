@@ -13,23 +13,25 @@ function CubeGame(canvasElement, config) {
 	self.isDebug = false;
 
 	var defaults = {
-		selectedProgressBar: 3,
+		selectedProgressBar: 1,
 		coeff: 20,
 		startX: 100,
 		startY: 200,
 		lineIncrement: 10
 	};
 	self.stats = [
-		{isSuccess: true, numberOfCubes: 1, time: 10000},
-		{isSuccess: false, numberOfCubes: 2, time: 10000},
-		{isSuccess: false, numberOfCubes: 3, time: 10000},
-		{isSuccess: true, numberOfCubes: 4, time: 10000},
-		{isSuccess: false, numberOfCubes: 5, time: 10000},
-		{isSuccess: true, numberOfCubes: 25, time: 10000},
-		{isSuccess: false, numberOfCubes: 25, time: 10000},
-		{isSuccess: false, numberOfCubes: 25, time: 10000},
-		{isSuccess: false, numberOfCubes: 25, time: 10000},
-		{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: true, numberOfCubes: 1, time: 10000},
+		//{isSuccess: false, numberOfCubes: 2, time: 10000},
+		//{isSuccess: false, numberOfCubes: 3, time: 10000},
+		//{isSuccess: true, numberOfCubes: 4, time: 10000},
+		//{isSuccess: false, numberOfCubes: 5, time: 10000},
+		//{isSuccess: true, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 10000},
 	];
 	self.currentTime = 0;
 	self.config = _.extend(defaults, config);
@@ -37,7 +39,7 @@ function CubeGame(canvasElement, config) {
 	self.drawProgress = new DrawProgress({
 		canvas: canvasElement,
 		ctx: this.ctx,
-		// self.config.selectedProgressBar
+		progressTime: 10,
 		selectedProgressBar: self.config.selectedProgressBar,
 		callBack: function(){
 			writeCubeNumber();
@@ -222,12 +224,21 @@ function CubeGame(canvasElement, config) {
 		return self.cubeCount;
 	}
 
-	function writeCubeNumber() {
+	function writeCubeNumber(status) {
 		self.ctx.beginPath();
-		self.ctx.font = '30px sans-serif';
-		self.ctx.fillText(getNumberOfCubes(), self.canvas.width - 50, self.canvas.height - 50);
+		var statusText = '';
+		if (typeof status != 'undefined'){
+			if (status){
+				self.ctx.fillStyle = 'green';
+				statusText = ' correct ';
+			}else{
+				statusText = ' incorrect ';
+				self.ctx.fillStyle = 'red';
+			}
+		}
+		self.ctx.font = '16px sans-serif';
+		self.ctx.fillText(statusText + getNumberOfCubes(), self.canvas.width - 120, self.canvas.height - 50);
 		self.ctx.closePath();
-		//console.log(getNumberOfCubes());
 	}
 
 
@@ -245,7 +256,6 @@ function CubeGame(canvasElement, config) {
 	function drawStats() {
 		var tmpStats = _.clone(self.stats);
 		tmpStats = tmpStats.splice(tmpStats.length - 5, 5);
-
 		var ctx = self.ctx;
 		ctx.fillStyle = 'rgba(0,0,0,1)';
 		ctx.font = '22px sans-serif';
@@ -261,7 +271,7 @@ function CubeGame(canvasElement, config) {
 		// table
 		console.log(tmpStats, tmpStats[3]);
 		for (var cnt = 0; cnt < tmpStats.length; cnt++) {
-			var record = self.stats[cnt];
+			var record = tmpStats[cnt];
 			console.log(record, cnt);
 			ctx.fillStyle = record.isSuccess ? 'green' : 'red';
 			ctx.font = '20px sans-serif';
@@ -279,9 +289,10 @@ function CubeGame(canvasElement, config) {
 		if (!!self.progressInterval) {
 			clearInterval(self.progressInterval);
 		}
-		writeCubeNumber();
-		saveStats(getNumberOfCubes(), cubeNumber == getNumberOfCubes());
-		return cubeNumber == getNumberOfCubes();
+		var isCorrect = cubeNumber == getNumberOfCubes();
+		writeCubeNumber(isCorrect);
+		saveStats(getNumberOfCubes(), isCorrect);
+		return isCorrect;
 
 	}
 

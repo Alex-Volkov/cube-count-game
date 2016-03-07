@@ -1,5 +1,10 @@
+// TODO
+// define progressbar width +
 function DrawProgress(config) {
-	this.config = config;
+	var defaults = {
+		progressTime: 10
+	};
+	this.config = _.extend(defaults, config);
 	this.progressWidth = this.config.canvas.width;
 	this.cellWidthConst = 10;
 	this.cellWidth;
@@ -30,7 +35,7 @@ function DrawProgress(config) {
 	DrawProgress.prototype.firstProgress = function() {
 
 		this.progressWidth = this.config.canvas.width;
-		this.progressIncrement = this.progressWidth / 1000;
+		this.progressIncrement = this.progressWidth / (this.config.progressTime * 100);
 		clearInterval(this.progressInterval);
 		this.redFraction = 255;
 		this.progressInterval = setInterval(this.firstProgressFraction.bind(this), 10);
