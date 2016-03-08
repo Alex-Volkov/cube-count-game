@@ -1,0 +1,25 @@
+{
+  "name": "cube-game",
+  "main": "cubeGame.js",
+  "homepage": "https://github.com/Alex-Volkov/cube-count-game",
+  "authors": [
+    "alex <infernal06@gmail.com>"
+  ],
+  "description": "canvas based cube count game",
+  "moduleType": [],
+  "keywords": [
+    "html5-canvas",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "canvas-progress-bar": "git@github.com:Alex-Volkov/canvas-progress-bar.git"
+  }
+}

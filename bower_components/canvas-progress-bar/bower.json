@@ -1,0 +1,22 @@
+{
+  "name": "canvas-progress-bar",
+  "homepage": "https://github.com/Alex-Volkov/canvas-progress-bar",
+  "authors": [
+    "alex <infernal06@gmail.com>"
+  ],
+  "description": "canvas progress bar",
+  "main": "progressBars.js",
+  "moduleType": [],
+  "keywords": [
+    "canvas",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas progress bar</title>
+</head>
+<body>
+<canvas id="canvas1" width="600px" height="30px"></canvas>
+<canvas id="canvas2" width="600px" height="30px"></canvas>
+<canvas id="canvas3" width="600px" height="30px"></canvas>
+<script src="progressBars.js"></script>
+<script src="underscore-min.js"></script>
+<script>
+    var canvas1 = document.getElementById('canvas1');
+    var canvas2 = document.getElementById('canvas2');
+    var canvas3 = document.getElementById('canvas3');
+
+    var progress1 = new DrawProgress({canvas: canvas1, selectedProgressBar: 1, onEndCallBack: function(){
+        progress1.writeProgress()
+    }});
+    progress1.writeProgress();
+
+    var progress2 = new DrawProgress({canvas: canvas2, selectedProgressBar: 2, onEndCallBack: function(){
+        progress2.writeProgress()
+    }});
+    progress2.writeProgress();
+
+    var progress3 = new DrawProgress({canvas: canvas3, selectedProgressBar: 3, onEndCallBack: function(){
+        progress3.writeProgress()
+    }});
+    progress3.writeProgress()
+</script>
+</body>
+</html>

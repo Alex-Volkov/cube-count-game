@@ -22,18 +22,7 @@ function CubeGame(canvasElement, config) {
 		attempts: 3
 	};
 	self.stats = [
-		//{isSuccess: true, numberOfCubes: 1, time: 3000},
-		//{isSuccess: false, numberOfCubes: 2, time: 4000},
 		//{isSuccess: false, numberOfCubes: 3, time: 5000},
-		//{isSuccess: true, numberOfCubes: 4, time: 6000},
-		//{isSuccess: false, numberOfCubes: 5, time: 10000},
-		//{isSuccess: true, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 10000},
-		//{isSuccess: true, numberOfCubes: 25, time: 5000},
-		//{isSuccess: false, numberOfCubes: 25, time: 6000},
-		//{isSuccess: true, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 7000},
 	];
 	self.currentTime = 0;
 	self.config = _.extend(defaults, config);
@@ -43,7 +32,7 @@ function CubeGame(canvasElement, config) {
 		ctx: this.ctx,
 		progressTime: 10,
 		selectedProgressBar: self.config.selectedProgressBar,
-		callBack: function () {
+		onEndCallBack: function () {
 			writeCubeNumber();
 			saveStats(getNumberOfCubes(), false);
 			setTimeout(function () {
@@ -305,7 +294,6 @@ function CubeGame(canvasElement, config) {
 
 	function getStats() {
 		drawStats();
-		//console.log(self.stats);
 		return self.stats;
 	}
 
@@ -334,9 +322,8 @@ function CubeGame(canvasElement, config) {
 			step += 35;
 		})
 	}
-
+	// drawing bar for the stats
 	function drawCandle(candle, xOffset, chartStartX, chartStartY) {
-		// candleHeight is a time in ms
 		var ctx = self.ctx;
 		var candleWidth = 30;
 		ctx.beginPath();
