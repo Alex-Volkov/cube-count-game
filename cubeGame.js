@@ -11,27 +11,29 @@ function CubeGame(canvasElement, config) {
 	self.firstPass = true;
 	self.fields = [];
 	self.isDebug = false;
+	self.attemptCount = 0;
 
 	var defaults = {
 		selectedProgressBar: 1,
 		coeff: 20,
 		startX: 100,
 		startY: 200,
-		lineIncrement: 10
+		lineIncrement: 10,
+		attempts: 3
 	};
 	self.stats = [
-		//{isSuccess: true, numberOfCubes: 1, time: 10000},
-		//{isSuccess: false, numberOfCubes: 2, time: 10000},
-		//{isSuccess: false, numberOfCubes: 3, time: 10000},
-		//{isSuccess: true, numberOfCubes: 4, time: 10000},
+		//{isSuccess: true, numberOfCubes: 1, time: 3000},
+		//{isSuccess: false, numberOfCubes: 2, time: 4000},
+		//{isSuccess: false, numberOfCubes: 3, time: 5000},
+		//{isSuccess: true, numberOfCubes: 4, time: 6000},
 		//{isSuccess: false, numberOfCubes: 5, time: 10000},
 		//{isSuccess: true, numberOfCubes: 25, time: 10000},
 		//{isSuccess: false, numberOfCubes: 25, time: 10000},
 		//{isSuccess: false, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 10000},
-		//{isSuccess: false, numberOfCubes: 25, time: 10000},
+		//{isSuccess: true, numberOfCubes: 25, time: 5000},
+		//{isSuccess: false, numberOfCubes: 25, time: 6000},
+		//{isSuccess: true, numberOfCubes: 25, time: 10000},
+		//{isSuccess: false, numberOfCubes: 25, time: 7000},
 	];
 	self.currentTime = 0;
 	self.config = _.extend(defaults, config);
@@ -41,7 +43,7 @@ function CubeGame(canvasElement, config) {
 		ctx: this.ctx,
 		progressTime: 10,
 		selectedProgressBar: self.config.selectedProgressBar,
-		callBack: function(){
+		callBack: function () {
 			writeCubeNumber();
 			saveStats(getNumberOfCubes(), false);
 			setTimeout(function () {
@@ -197,7 +199,10 @@ function CubeGame(canvasElement, config) {
 		}
 	}
 
-	function drawCubes(fieldWidth, lineWidth, numberOfFields, fields) {
+	function drawCubes(fieldWidth, lineWidth, numberOfFields, resetAttemptsCount) {
+		if (!!resetAttemptsCount){
+			self.attemptCount = 0;
+		}
 		self.fieldWidth = fieldWidth;
 		self.lineWidth = lineWidth;
 		self.numberOfFields = numberOfFields;
@@ -205,15 +210,19 @@ function CubeGame(canvasElement, config) {
 
 		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height);
 		self.fields = fillFields(fieldWidth, lineWidth, numberOfFields);
-		// for debug
-		if (!!fields) {
-			self.fields = fields
-		}
+
 		self.firstPass = true;
-		drawFields(self.fields);
+		if(self.attemptCount < self.config.attempts) {
+			drawFields(self.fields);
+			self.attemptCount++;
+		}else{
+			console.log('drawing stats');
+			drawStatsChart();
+			self.drawProgress.cancelProgress();
+		}
 		//progressWidth = self.canvas.width;
 		//window.requestAnimationFrame(drawProgress);
-		if (!self.isDebug) {
+		if (!self.isDebug && self.attemptCount <= self.config.attempts) {
 			self.drawProgress.writeProgress();
 
 		}
@@ -227,11 +236,11 @@ function CubeGame(canvasElement, config) {
 	function writeCubeNumber(status) {
 		self.ctx.beginPath();
 		var statusText = '';
-		if (typeof status != 'undefined'){
-			if (status){
+		if (typeof status != 'undefined') {
+			if (status) {
 				self.ctx.fillStyle = 'green';
 				statusText = ' correct ';
-			}else{
+			} else {
 				statusText = ' incorrect ';
 				self.ctx.fillStyle = 'red';
 			}
@@ -242,11 +251,9 @@ function CubeGame(canvasElement, config) {
 	}
 
 
-
-
 	function saveStats(numberOfCubes, isSuccess) {
 		self.stats.push({
-			time: self.currentTime,
+			time: self.drawProgress.getCurrentTime(),
 			numberOfCubes: numberOfCubes,
 			isSuccess: isSuccess,
 			matrix: JSON.stringify(self.fields)
@@ -255,8 +262,8 @@ function CubeGame(canvasElement, config) {
 
 	function drawStats() {
 		var tmpStats = _.clone(self.stats);
-		tmpStats = tmpStats.splice(tmpStats.length - 5, 5);
 		var ctx = self.ctx;
+		tmpStats = tmpStats.splice(tmpStats.length - 5, 5);
 		ctx.fillStyle = 'rgba(0,0,0,1)';
 		ctx.font = '22px sans-serif';
 		// caption
@@ -269,7 +276,7 @@ function CubeGame(canvasElement, config) {
 		//ctx.fillText('is successfull', x + 30, y - 50);
 		ctx.fillText('number of cubes', x + 40, y - 50);
 		// table
-		console.log(tmpStats, tmpStats[3]);
+		//console.log(tmpStats, tmpStats[3]);
 		for (var cnt = 0; cnt < tmpStats.length; cnt++) {
 			var record = tmpStats[cnt];
 			console.log(record, cnt);
@@ -298,17 +305,69 @@ function CubeGame(canvasElement, config) {
 
 	function getStats() {
 		drawStats();
-		console.log(self.stats);
+		//console.log(self.stats);
 		return self.stats;
 	}
 
-	//drawCubes(3,3,4, [field1, field2, field3]);
-	//drawCubes(3,3,4, [[[1,1,0],[0,1,0],[0,1,0]],[[0,0,0],[0,0,1],[0,0,1]],[[1,0,1],[0,0,0],[0,1,0]]]);
+	function drawStatsChart() {
+		var ctx = self.ctx;
+		var step = 0;
+		var startY = -50;
+		var stats = _.clone(self.stats);
+		ctx.beginPath();
+		ctx.fillStyle = '#000';
+		ctx.textAlign = 'center';
+		ctx.font = '22px sans-serif';
+		ctx.fillText('Records', 500, startY + 100);
+		ctx.moveTo(400, startY + 100);
+		ctx.lineTo(400, startY +250);
+		ctx.stroke();
+		ctx.lineTo(600, startY + 250);
+		ctx.stroke();
+		ctx.closePath();
+		if (stats.length > 5){
+			stats = stats.splice(stats.length - 5)
+		}
+		console.log(stats);
+		stats.forEach(function (elem) {
+			drawCandle(elem, step, 400, startY + 250);
+			step += 35;
+		})
+	}
+
+	function drawCandle(candle, xOffset, chartStartX, chartStartY) {
+		// candleHeight is a time in ms
+		var ctx = self.ctx;
+		var candleWidth = 30;
+		ctx.beginPath();
+		ctx.fillStyle = candle.isSuccess ? '#214d71' : '#890000';
+		ctx.strokeStyle = '#000';
+		ctx.lineWidth = 2;
+		if (candle.time / 100 < 1){
+			candle.time = 1000;
+		}
+		ctx.fillRect(chartStartX + xOffset + 5, chartStartY - candle.time / 100, candleWidth, candle.time / 100);
+		ctx.strokeRect(chartStartX + xOffset + 5, chartStartY - candle.time / 100, candleWidth, candle.time / 100);
+		ctx.closePath();
+		setTimeout(function () {
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(560, chartStartY - 100);
+			ctx.rotate(Math.PI / 2);
+			ctx.fillStyle = candle.time < 2000 ? '#000' : '#fff';
+			ctx.font = '16px sans-serif ';
+			ctx.textAlign = 'right';
+			ctx.fillText(candle.time / 1000 + 's', 90, 140 - xOffset + 5 );
+			ctx.closePath();
+			ctx.restore();
+		},1)
+	}
 
 	return {
 		drawCubes: drawCubes,
 		getNumberOfCubes: getNumberOfCubes,
 		checkAnswer: checkAnswer,
-		getStats: getStats
+		getStats: getStats,
+		drawStatsChart: drawStatsChart
 	}
 }

@@ -23,16 +23,27 @@
             border: 1px solid #ccc;
             font-size: 1.2rem;
         }
+        canvas{
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
 <canvas id="canvas1" width="600px" height="600px">
 
 </canvas>
+<!--
+1. draw a chart for stats +
+2. add termination after specified amount of attempts +
+3. push it to github
+4. add to portfolio
+5. add to upwork
 
+-->
 <div>
-    <button onclick="cubeGames.drawCubes(4,4,4)">redraw</button>
-    <button onclick="cubeGames.getStats()">Stats</button>
+    <button onclick="cubeGames.drawCubes(4,4,4, true)">redraw</button>
+    <button onclick="cubeGames.drawStatsChart()">Stats</button>
     <input type="number" placeholder="enter number of cubes" >
 </div>
 <script src="../bower_components/underscore/underscore-min.js"></script>

@@ -15,6 +15,7 @@ function DrawProgress(config) {
 	this.yPos = 0;
 	this.currentTime = 0;
 	this.callBack = config.callBack;
+	this.progressCancelled = false;
 
 	// getting random red fraction of color
 	DrawProgress.prototype.getColorFraction = function() {
@@ -29,11 +30,14 @@ function DrawProgress(config) {
 	DrawProgress.prototype.onProgressComplete = function() {
 		clearInterval(this.progressInterval);
 		this.config.ctx.clearRect(0, this.yPos, this.config.canvas.width, 10);
-		this.config.callBack();
+		if(!this.progressCancelled){
+			this.config.callBack();
+			this.progressCancelled = false;
+		}
 	};
 
 	DrawProgress.prototype.firstProgress = function() {
-
+		this.currentTime = 0;
 		this.progressWidth = this.config.canvas.width;
 		this.progressIncrement = this.progressWidth / (this.config.progressTime * 100);
 		clearInterval(this.progressInterval);
@@ -43,7 +47,7 @@ function DrawProgress(config) {
 	DrawProgress.prototype.firstProgressFraction = function () {
 		this.currentTime += 10;
 		var ctx = this.config.ctx;
-		ctx.clearRect(0, 0, this.config.canvas.width, 10);
+		ctx.clearRect(0, 0, this.config.canvas.width, 11);
 		ctx.beginPath();
 		if (this.currentTime % 6 == 0) {
 			this.redFraction--;
@@ -148,6 +152,14 @@ function DrawProgress(config) {
 		if (this.progressWidth <= 0) {
 			this.onProgressComplete.apply(this);
 		}
+	};
+	DrawProgress.prototype.cancelProgress = function(){
+		this.progressCancelled = true;
+		clearInterval(this.progressInterval);
+		DrawProgress.prototype.onProgressComplete.apply(this);
+	};
+	DrawProgress.prototype.getCurrentTime = function(){
+		return this.currentTime;
 	};
 	DrawProgress.prototype.writeProgress = function(){
 		switch (this.config.selectedProgressBar){
