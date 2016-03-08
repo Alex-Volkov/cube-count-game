@@ -15,7 +15,6 @@
         button:hover{
             background-color: #eee;
             color: red;
-            /*opacity: .5;*/
         }
         input{
             padding: .5rem;
@@ -27,41 +26,35 @@
             display: block;
             margin: 0 auto;
         }
+        .panel{
+            width:600px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
 <canvas id="canvas1" width="600px" height="600px">
 
 </canvas>
-<!--
-1. draw a chart for stats +
-2. add termination after specified amount of attempts +
-3. push it to github
-4. add to portfolio
-5. add to upwork
 
--->
-<div>
+<div class="panel">
     <button onclick="cubeGames.drawCubes(4,4,4, true)">redraw</button>
     <button onclick="cubeGames.drawStatsChart()">Stats</button>
     <input type="number" placeholder="enter number of cubes" >
 </div>
-<script src="../bower_components/underscore/underscore-min.js"></script>
+<script src="underscore-min.js"></script>
 <script src="cubeGame.js"></script>
 <script src="progressBars.js"></script>
 <script>
 
     var cubeGames = new CubeGame(document.getElementById('canvas1'), {startX: 200, startY: 200});
-//    cubeGames.drawCubes(1,1,1);
     cubeGames.drawCubes(3,3,4);
     function checkAnswer(evt){
         var inputValue = evt.target.value;
         if(evt.keyCode == 13 && inputValue.length){
-//        console.log(inputValue);
             console.log(cubeGames.checkAnswer(inputValue));
             evt.target.value = '';
         }
-//        console.log(evt);
     }
     document.getElementsByTagName('input')[0].onkeydown = checkAnswer;
 </script>
