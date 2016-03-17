@@ -19,14 +19,13 @@
     "test",
     "tests"
   ],
-  "_release": "a9293d6fdd",
+  "_release": "ea41a29f3f",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "a9293d6fddc6ebaff2042f97a43c45ecf825011e"
+    "commit": "ea41a29f3ff459f0b2ac77d074c2f697c1be39aa"
   },
   "_source": "git@github.com:Alex-Volkov/canvas-progress-bar.git",
   "_target": "*",
-  "_originalSource": "git@github.com:Alex-Volkov/canvas-progress-bar.git",
-  "_direct": true
+  "_originalSource": "git@github.com:Alex-Volkov/canvas-progress-bar.git"
 }

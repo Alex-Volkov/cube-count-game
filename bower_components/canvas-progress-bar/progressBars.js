@@ -46,118 +46,115 @@ function DrawProgress(config) {
 		this.progressIncrement = this.progressWidth / (this.config.progressTime * 100);
 		clearInterval(this.progressInterval);
 		this.redFraction = 255;
-		this.progressInterval = setInterval(this.firstProgressFraction.bind(this), 10);
+		this.progressInterval = setInterval(function () {
+			this.currentTime += 10;
+			var ctx = this.config.ctx;
+			ctx.clearRect(0, 0, this.config.canvas.width, 11);
+			ctx.beginPath();
+			if (this.currentTime % 6 == 0) {
+				this.redFraction--;
+			}
+			ctx.fillStyle = 'rgba(' + this.redFraction + ',0,0, .7)';
+			ctx.rect(0, 0, this.progressWidth, 10);
+			ctx.fill();
+			ctx.closePath();
+			this.progressWidth -= this.progressIncrement;
+			if (this.progressWidth <= 0) {
+				this.onProgressComplete.apply(this);
+			}
+		}.bind(this), 10);
 	};
 
-	DrawProgress.prototype.firstProgressFraction = function () {
-		this.currentTime += 10;
-		var ctx = this.config.ctx;
-		ctx.clearRect(0, 0, this.config.canvas.width, 11);
-		ctx.beginPath();
-		if (this.currentTime % 6 == 0) {
-			this.redFraction--;
-		}
-		ctx.fillStyle = 'rgba(' + this.redFraction + ',0,0, .7)';
-		ctx.rect(0, 0, this.progressWidth, 10);
-		ctx.fill();
-		ctx.closePath();
-		this.progressWidth -= this.progressIncrement;
-		if (this.progressWidth <= 0) {
-			this.onProgressComplete.apply(this);
-		}
-	};
 
 	DrawProgress.prototype.secondProgress = function () {
 		this.progressWidth = this.config.canvas.width;
-		this.progressInterval = setInterval(this.secondProgressFrame.bind(this), 10)
-	};
-
-	DrawProgress.prototype.secondProgressFrame = function () {
-		//console.log(progressWidth2);
-		var ctx = this.config.ctx;
-		if (this.opacity < 1) {
-			this.opacity += 0.0005;
-		}
-		ctx.clearRect(0, this.yPos, this.config.canvas.width, 21);
-		this.progressWidth -= .6;
-		this.currentTime += 10;
-		for (var cnt = 0; cnt < this.config.canvas.width; cnt += 10) {
-			ctx.beginPath();
-			if (this.waitParam == 300 || this.waitParam == 0) {
-				this.waitParam = 0;
-				this.colors[cnt] = this.getColorFraction();
-				this.colors2[cnt] = this.getColorFraction();
+		this.progressInterval = setInterval(function () {
+			//console.log(progressWidth2);
+			var ctx = this.config.ctx;
+			if (this.opacity < 1) {
+				this.opacity += 0.0005;
 			}
-
-			//ctx.strokeStyle = 'white';
-			//ctx.lineWidth = 1;
-			if (cnt < this.progressWidth) {
-				if (cnt < this.progressWidth && (cnt + this.cellWidthConst > this.progressWidth )) {
-					this.cellWidth = this.cellWidthConst - (cnt - this.progressWidth);
-				} else {
-					this.cellWidth = this.cellWidthConst;
-				}
-				ctx.fillStyle = 'rgba(' + this.colors[cnt] + ',' + '0, 0,' + this.opacity + ')';
-				ctx.rect(cnt, this.yPos, this.cellWidth, 20);
-				ctx.fill();
-				//ctx.stroke();
-				ctx.closePath();
+			ctx.clearRect(0, this.yPos, this.config.canvas.width, 21);
+			this.progressWidth -= .6;
+			this.currentTime += 10;
+			for (var cnt = 0; cnt < this.config.canvas.width; cnt += 10) {
 				ctx.beginPath();
-				ctx.fillStyle = 'rgba(' + this.colors2[cnt] + ',' + '0, 0,' + this.opacity + ')';
-				ctx.rect(cnt, this.yPos + 10, this.cellWidth, 10);
-				ctx.fill();
-				ctx.closePath();
+				if (this.waitParam == 300 || this.waitParam == 0) {
+					this.waitParam = 0;
+					this.colors[cnt] = this.getColorFraction();
+					this.colors2[cnt] = this.getColorFraction();
+				}
 
+				//ctx.strokeStyle = 'white';
+				//ctx.lineWidth = 1;
+				if (cnt < this.progressWidth) {
+					if (cnt < this.progressWidth && (cnt + this.cellWidthConst > this.progressWidth )) {
+						this.cellWidth = this.cellWidthConst - (cnt - this.progressWidth);
+					} else {
+						this.cellWidth = this.cellWidthConst;
+					}
+					ctx.fillStyle = 'rgba(' + this.colors[cnt] + ',' + '0, 0,' + this.opacity + ')';
+					ctx.rect(cnt, this.yPos, this.cellWidth, 20);
+					ctx.fill();
+					//ctx.stroke();
+					ctx.closePath();
+					ctx.beginPath();
+					ctx.fillStyle = 'rgba(' + this.colors2[cnt] + ',' + '0, 0,' + this.opacity + ')';
+					ctx.rect(cnt, this.yPos + 10, this.cellWidth, 10);
+					ctx.fill();
+					ctx.closePath();
+
+				}
 			}
-		}
-		this.waitParam += 10;
-		if (this.progressWidth <= 0) {
-			this.onProgressComplete.apply(this);
-		}
+			this.waitParam += 10;
+			if (this.progressWidth <= 0) {
+				this.onProgressComplete.apply(this);
+			}
+		}.bind(this), 10)
 	};
+
 	DrawProgress.prototype.thirdProgress = function () {
 		this.opacity = .7;
 		this.progressWidth = this.config.canvas.width;
-		this.progressInterval = setInterval(this.thirdProgressFrame.bind(this), 10)
-	};
-
-	DrawProgress.prototype.thirdProgressFrame = function () {
-		//console.log(progressWidth2);
-		var ctx = this.config.ctx;
-		if (this.opacity < 1) {
-			this.opacity += 0.0005;
-		}
-		ctx.clearRect(0, this.yPos, this.config.canvas.width, 21);
-		this.progressWidth -= .6;
-		this.currentTime += 10;
-		for (var cnt = 0; cnt < this.config.canvas.width; cnt += 10) {
-			ctx.beginPath();
-			if (this.waitParam == 300 || this.waitParam == 0) {
-				this.waitParam = 0;
-				this.colors[cnt] = this.getColorFraction();
-				this.colors2[cnt] = this.getColorFraction();
+		this.progressInterval = setInterval(function () {
+			//console.log(progressWidth2);
+			var ctx = this.config.ctx;
+			if (this.opacity < 1) {
+				this.opacity += 0.0005;
 			}
-
-			ctx.strokeStyle = 'white';
-			ctx.lineWidth = 1;
-			if (cnt < this.progressWidth) {
-				if (cnt < this.progressWidth && (cnt + this.cellWidthConst > this.progressWidth )) {
-					this.cellWidth = this.cellWidthConst - (cnt - this.progressWidth);
-				} else {
-					this.cellWidth = this.cellWidthConst;
+			ctx.clearRect(0, this.yPos, this.config.canvas.width, 21);
+			this.progressWidth -= .6;
+			this.currentTime += 10;
+			for (var cnt = 0; cnt < this.config.canvas.width; cnt += 10) {
+				ctx.beginPath();
+				if (this.waitParam == 300 || this.waitParam == 0) {
+					this.waitParam = 0;
+					this.colors[cnt] = this.getColorFraction();
+					this.colors2[cnt] = this.getColorFraction();
 				}
-				ctx.fillStyle = 'rgba(' + this.colors[cnt] + ',' + '0, 0,' + this.opacity + ')';
-				ctx.rect(cnt, this.yPos, this.cellWidth, 15);
-				ctx.fill();
-				ctx.stroke();
-				ctx.closePath();
+
+				ctx.strokeStyle = 'white';
+				ctx.lineWidth = 1;
+				if (cnt < this.progressWidth) {
+					if (cnt < this.progressWidth && (cnt + this.cellWidthConst > this.progressWidth )) {
+						this.cellWidth = this.cellWidthConst - (cnt - this.progressWidth);
+					} else {
+						this.cellWidth = this.cellWidthConst;
+					}
+					ctx.fillStyle = 'rgba(' + this.colors[cnt] + ',' + '0, 0,' + this.opacity + ')';
+					ctx.rect(cnt, this.yPos, this.cellWidth, 15);
+					ctx.fill();
+					ctx.stroke();
+					ctx.closePath();
+				}
 			}
-		}
-		this.waitParam += 10;
-		if (this.progressWidth <= 0) {
-			this.onProgressComplete.apply(this);
-		}
+			this.waitParam += 10;
+			if (this.progressWidth <= 0) {
+				this.onProgressComplete.apply(this);
+			}
+		}.bind(this), 10)
 	};
+
 	DrawProgress.prototype.cancelProgress = function () {
 		this.progressCancelled = true;
 		clearInterval(this.progressInterval);
