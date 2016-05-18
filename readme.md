@@ -18,4 +18,4 @@ By default game plays three times and displays record table. It can be altered w
 
 New game can be started with **Redraw** button 
 
-[demo page](alex-volkov.github.io/cube-count-game)
+[demo page](http://alex-volkov.github.io/cube-count-game)
